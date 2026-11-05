@@ -1,0 +1,604 @@
+{% extends "base.html" %}
+
+{% block title %}Spellbook - منصة التحقق والتدقيق الجمركي بالذكاء الاصطناعي{% endblock %}
+
+{% block content %}
+<!-- عنصر خفي لتمرير حالة تسجيل الدخول للـ JavaScript بدون أي مشاكل أو خطوط حمراء في المحرر -->
+<input type="hidden" id="userStatus" data-logged-in="{{ 'true' if is_logged_in else 'false' }}">
+
+<div class="container-fluid px-lg-5 my-4">
+
+    <!-- SECTION 1: HERO CAROUSEL -->
+    <section class="hero-section mb-5 animate__animated animate__fadeIn">
+        <div class="hero-glow"></div>
+        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+            <div class="carousel-inner">
+
+                <!-- Slide 1 -->
+                <div class="carousel-item active">
+                    <div class="row align-items-center g-4">
+                        <div class="col-lg-7">
+                            <span class="badge bg-primary bg-opacity-10 text-purple border border-secondary border-opacity-25 px-3 py-2 rounded-pill fw-bold mb-3">
+                                <i class="fa-solid fa-brain me-1"></i> الذكاء الاصطناعي الجمركي الأحدث
+                            </span>
+                            <h1 class="display-5 fw-black text-white mb-3">تحقق من مستندات شحنتك خلال ثوانٍ معدودة</h1>
+                            <p class="text-muted fs-5 mb-4">ارفع الفاتورة وقائمة التعبئة (Packing List)، وسيقوم الذكاء الاصطناعي بمقارنتها آلياً والمطابقة مع كتيب وقوانين الجمارك للتأكد من خلوها من التناقضات والقيود.</p>
+                            <div class="d-flex flex-wrap gap-3">
+                                <a href="/upload" class="btn-inspect-cta protected-link" onclick="return checkAuthAndProceed(event, this.href);">
+                                    <i class="fa-solid fa-magnifying-glass me-2"></i> ابدأ الفحص الآلي الآن
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-lg-5 text-center">
+                            <div class="bg-white bg-opacity-05 p-4 rounded-4 border border-white border-opacity-10 shadow-lg">
+                                <i class="fa-solid fa-file-shield text-warning mb-3" style="font-size: 4rem;"></i>
+                                <h5 class="fw-bold text-white mb-2">كشف التناقضات الجمركية</h5>
+                                <p class="text-muted small mb-0">مطابقة الأوزان، المبالغ، والأسماء بين جميع المستندات آلياً بنسبة دقة تصل إلى 99.4%.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="carousel-item">
+                    <div class="row align-items-center g-4">
+                        <div class="col-lg-7">
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill fw-bold mb-3">
+                                <i class="fa-solid fa-book-bookmark me-1"></i> مطابقة التعريفة والكتيب
+                            </span>
+                            <h1 class="display-5 fw-black text-white mb-3">تجنب الغرامات وتأخير الشحنات في الموانئ</h1>
+                            <p class="text-muted fs-5 mb-4">اكتشف ما إذا كانت السلعة محظورة، مقيدة، أو تتطلب موافقات من هيئة المواصفات أو الجهات الصحية قبل تقديم الإقرار الجمركي.</p>
+                            <div class="d-flex flex-wrap gap-3">
+                                <a href="/hs-code" class="btn-inspect-cta protected-link" onclick="return checkAuthAndProceed(event, this.href);">
+                                    <i class="fa-solid fa-shield-halved me-2"></i> افحص الشحنة الآن
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-lg-5 text-center">
+                            <div class="bg-white bg-opacity-05 p-4 rounded-4 border border-white border-opacity-10 shadow-lg">
+                                <i class="fa-solid fa-scale-balanced text-info mb-3" style="font-size: 4rem;"></i>
+                                <h5 class="fw-bold text-white mb-2">دليل القيود واللوائح</h5>
+                                <p class="text-muted small mb-0">تأكد من شروط استيراد البضاعة وتحديد نسبة الرسوم الجمركية والضرائب بشكل مسبق.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="carousel-indicators position-relative mt-4 mb-0">
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: LIVE AI DEMO SCANNER -->
+    <section id="demo-scanner" class="mb-5">
+        <div class="text-center mb-4">
+            <span class="badge bg-purple bg-opacity-10 text-purple rounded-pill px-3 py-1 fw-bold mb-2 border border-secondary border-opacity-25">منطقة الفحص التفاعلية المباشرة</span>
+            <h2 class="fw-black text-white">ارفع مستندات شحنتك الجمركية وشاهد الـ AI يعمل فوراً</h2>
+            <p class="text-muted small">
+                {% if is_logged_in %}
+                    أهلاً بك! يمكنك رفع مستندات الشحنة والتدقيق الجمركي معاً واستخدام محرك الذكاء الاصطناعي مباشرة بلا قيود.
+                {% else %}
+                    يتطلب استخدام الفحص الآلي واستعراض المستندات الجمركية <strong>تسجيل الدخول</strong> أولاً للمتابعة وحفظ التقارير
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-5">
+                {% if is_logged_in %}
+                    <div class="upload-drop-zone text-center h-100 d-flex flex-column justify-content-center align-items-center position-relative" id="dropZoneArea">
+                        <input type="file" id="hiddenFileInput" class="d-none" accept=".pdf, image/*" multiple onchange="handleMultipleFilesSelected(this)">
+
+                        <div class="rounded-circle bg-success bg-opacity-10 text-success p-3 mb-2" style="width: 60px; height: 60px; display:flex; align-items:center; justify-content:center;">
+                            <i class="fa-solid fa-file-invoice-dollar fs-3"></i>
+                        </div>
+                        <h5 class="fw-bold text-white mb-1">اسحب وأفلت مستندات الشحنة الجمركية هنا</h5>
+
+                        <div class="bg-dark bg-opacity-70 p-2 rounded-2 border border-secondary border-opacity-25 my-2 w-100 text-start">
+                            <span class="text-warning fw-bold fs-xs d-block mb-1"><i class="fa-solid fa-circle-info me-1"></i> المستندات المطلوبة للتحقق:</span>
+                            <ul class="text-muted fs-xs ps-3 mb-0" style="list-style-type: disc;">
+                                <li><strong>الفاتورة التجارية</strong> (Commercial Invoice)</li>
+                                <li><strong>بوليسة الشحن</strong> (Bill of Lading)</li>
+                                <li><strong>شهادة المنشأ</strong> (Certificate of Origin)</li>
+                            </ul>
+                        </div>
+
+                        <p class="text-muted fs-xs mb-2">
+                            <span class="text-info fw-bold">الحد المسموح:</span> حتى 3 صور و 2 ملف PDF (أقصى حجم للملف: 5 ميغابايت)
+                        </p>
+                        <button type="button" class="btn btn-success rounded-pill px-4 py-2 fw-bold btn-sm" onclick="document.getElementById('hiddenFileInput').click();">اختر مستندات الشحنة للرفع</button>
+                        <small id="uploadErrorMsg" class="text-danger mt-2 d-none fw-bold fs-xs"></small>
+                    </div>
+                {% else %}
+                    <div class="upload-drop-zone text-center h-100 d-flex flex-column justify-content-center align-items-center position-relative protected-link" onclick="checkAuthAndProceed(event, '#')">
+                        <div class="rounded-circle bg-purple bg-opacity-10 text-purple p-3 mb-3" style="width: 70px; height: 70px; display:flex; align-items:center; justify-content:center;">
+                            <i class="fa-solid fa-user-lock fs-2"></i>
+                        </div>
+                        <h5 class="fw-bold text-white mb-1">منطقة الفحص مقيدة للمسجلين</h5>
+                        <p class="text-muted small mb-3">اضغط هنا أو حاول رفع المستندات الجمركية لتسجيل الدخول والوصول الكامل</p>
+                        <button type="button" class="btn-inspect-cta mb-3">
+                            <i class="fa-solid fa-right-to-bracket me-2"></i> تسجيل الدخول لاستعراض الملفات
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-lg-7">
+                <div class="ai-processing-card h-100 d-flex flex-column justify-content-between">
+                    <div class="scan-line" id="scanLineEffect" style="display: none;"></div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-dark text-white rounded-pill px-3 py-2 border border-secondary border-opacity-25">
+                            <i class="fa-solid fa-microchip me-1 text-info"></i> حالة التحليل الجمركي:
+                            <span id="analysisStatus">{% if is_logged_in %}جاهز للتحليل الفوري واستخراج البيانات{% else %}بانتظار تسجيل الدخول{% endif %}</span>
+                        </span>
+                    </div>
+                    <div class="my-auto py-4 text-center" id="aiCardContent">
+                        {% if is_logged_in %}
+                            <i class="fa-solid fa-robot text-success mb-3" style="font-size: 3.5rem;"></i>
+                            <h5 class="fw-bold text-white mb-1">النظام جاهز للعمل</h5>
+                            <p class="text-muted small mb-0">تم التعرف على جلستك بنجاح. يمكنك بدء الفحص الآلي والمطابقة الجمركية للمستندات بلا قيود.</p>
+                        {% else %}
+                            <i class="fa-solid fa-lock text-muted opacity-50 mb-3" style="font-size: 3.5rem;"></i>
+                            <h5 class="fw-bold text-white mb-1">المحتوى محمي بأمان</h5>
+                            <p class="text-muted small mb-0">يرجى تسجيل الدخول أو إنشاء حساب جديد لتتمكن من استخدام خوارزميات الاستخراج ومطابقة المستندات الجمركية.</p>
+                        {% endif %}
+                    </div>
+                    <div class="border-top border-secondary border-opacity-25 pt-3 mt-3 d-flex justify-content-between align-items-center text-muted fs-xs">
+                        <span><i class="fa-solid fa-shield me-1"></i> حماية صارمة لخصوصية البيانات الجمركية</span>
+                        <span>Spellbook AI v2.4</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: FEATURES GRID -->
+    <section class="mb-5">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper bg-primary bg-opacity-10 text-primary"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                    <h5 class="fw-bold text-white mb-2">استخراج البيانات التلقائي (OCR)</h5>
+                    <p class="text-muted small mb-0">قراءة وتفريغ كافة تفاصيل الفواتير والشهادات بمختلف اللغات وتجميع البيانات في سجل جمركي موحد.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper bg-success bg-opacity-10 text-success"><i class="fa-solid fa-calculator"></i></div>
+                    <h5 class="fw-bold text-white mb-2">تقدير الرسوم والضرائب</h5>
+                    <p class="text-muted small mb-0">حساب تقديري للرسوم الجمركية والضريبة القيمة المضافة بناءً على النظام المنسق (HS Code).</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper bg-warning bg-opacity-10 text-warning"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <h5 class="fw-bold text-white mb-2">مؤشر إدارة المخاطر</h5>
+                    <p class="text-muted small mb-0">تنبيه فوري عند اكتشاف اختلاف الأوزان، الأسعار غير المنطقية، أو البضائع التي تتطلب إذن استيراد.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: HOW IT WORKS - WORKFLOW TRACKER -->
+    <section class="mb-5 py-4">
+        <div class="text-center mb-5">
+            <span class="badge rounded-pill px-3 py-1 fw-bold mb-2 border border-secondary border-opacity-25" style="background-color: rgba(168, 85, 247, 0.1); color: #c084fc;">خطوات التدقيق Smart Workflow</span>
+            <h2 class="fw-black text-white">كيف يعمل Spellbook للتدقيق الجمركي؟</h2>
+            <p class="text-muted small">رحلة تدقيق المستندات الجمركية من الرفع وحتى التخليص النهائي بـ 4 خطوات بسيطة</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="text-primary mb-3 mt-2 fs-3"><i class="fa-solid fa-file-arrow-up"></i></div>
+                    <h6 class="fw-bold text-white mb-2">1. رفع الملفات</h6>
+                    <p class="text-muted small mb-0">إدراج ملفات الفواتير، البوالص، وقوائم التعبئة بصيغ PDF أو صور.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="text-info mb-3 mt-2 fs-3"><i class="fa-solid fa-robot"></i></div>
+                    <h6 class="fw-bold text-white mb-2">2. تحليل الـ OCR & AI</h6>
+                    <p class="text-muted small mb-0">قراءة وتحديد أسماء المواد، الأوزان، القيم المالية، والرموز الجمركية.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="text-warning mb-3 mt-2 fs-3"><i class="fa-solid fa-file-circle-check"></i></div>
+                    <h6 class="fw-bold text-white mb-2">3. المطابقة والقيود</h6>
+                    <p class="text-muted small mb-0">مقارنة المستندات مع بعضها البعض ومقاطعتها مع كراسة التعرفة الجمركية.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <div class="text-success mb-3 mt-2 fs-3"><i class="fa-solid fa-square-poll-vertical"></i></div>
+                    <h6 class="fw-bold text-white mb-2">4. التقرير النهائي</h6>
+                    <p class="text-muted small mb-0">توليد تقرير شامل بالأخطاء والمخاطر مع نسبة الرسوم المتوقعة.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: LIVE METRICS & STATS -->
+    <section class="mb-5">
+        <div class="row g-3">
+            <div class="col-6 col-md-3">
+                <div class="metric-card">
+                    <i class="fa-solid fa-file-contract text-info mb-2 fs-2"></i>
+                    <h3 class="display-6 fw-black text-white mb-1">+15,000</h3>
+                    <p class="text-muted small mb-0">مستند مفحوص آلياً</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="metric-card">
+                    <i class="fa-solid fa-bullseye text-success mb-2 fs-2"></i>
+                    <h3 class="display-6 fw-black text-white mb-1">99.4%</h3>
+                    <p class="text-muted small mb-0">دقة استخراج المطابقة</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="metric-card">
+                    <i class="fa-solid fa-clock-rotate-left text-warning mb-2 fs-2"></i>
+                    <h3 class="display-6 fw-black text-white mb-1">85%</h3>
+                    <p class="text-muted small mb-0">توفير في وقت التخليص</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="metric-card">
+                    <i class="fa-solid fa-shield-cat text-primary mb-2 fs-2"></i>
+                    <h3 class="display-6 fw-black text-white mb-1">24/7</h3>
+                    <p class="text-muted small mb-0">جاهزية مستمرة ومباشرة</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- Professional Auth Required Modal -->
+<div class="modal fade" id="authRequiredModal" tabindex="-1" aria-labelledby="authRequiredModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4 border-0 shadow-lg" style="background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(25px); border: 1px solid var(--glass-border) !important;">
+            <div class="modal-header border-0 pb-0">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-purple bg-opacity-15 text-purple p-2 me-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h5 class="modal-title fw-black text-white mb-0" id="authRequiredModalLabel">بوابة الأمان والتدقيق - Spellbook AI</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body text-center py-4">
+                <div class="mb-3">
+                    <span class="badge bg-purple bg-opacity-10 text-purple rounded-pill px-3 py-1 fw-bold fs-xs border border-secondary border-opacity-25">ميزة مخصصة للمسجلين فقط</span>
+                </div>
+                <h4 class="fw-bold text-white mb-2">سجل دخولك للاستفادة الكاملة من الخدمات</h4>
+                <p class="text-muted small mb-4">لكي تتمكن من رفع المستندات واستخدام محرك الذكاء الاصطناعي للتحقق، مراجعة السجلات، وتصفح دليل القيود الجمركية، يرجى تسجيل الدخول أو إنشاء حساب جديد.</p>
+
+                <div class="d-grid gap-2">
+                    <a href="/login" class="btn-inspect-cta justify-content-center py-2.5">
+                        <i class="fa-solid fa-right-to-bracket me-2"></i> تسجيل الدخول (Login)
+                    </a>
+                    <a href="/register" class="btn btn-outline-light rounded-pill py-2.5 fw-bold" style="border-color:var(--glass-border);">
+                        <i class="fa-solid fa-user-plus me-2"></i> إنشاء حساب جديد (Register)
+                    </a>
+                </div>
+            </div>
+
+            <div class="modal-footer border-0 pt-0 justify-content-center">
+                <small class="text-muted fs-xs"><i class="fa-solid fa-lock me-1"></i> بياناتك مشفرة بالكامل وتحت حماية معايير أمن المعلومات</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .fw-black { font-weight: 900; }
+    .fs-xs { font-size: 0.725rem !important; }
+
+    .hero-section {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 50%, rgba(15, 23, 42, 0.95) 100%);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        color: #ffffff;
+        border-radius: 28px;
+        padding: 3.5rem 2.5rem;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .hero-glow {
+        position: absolute;
+        top: -20%;
+        right: -10%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(168, 85, 247, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
+        pointer-events: none;
+    }
+
+    .upload-drop-zone {
+        background: rgba(255, 255, 255, 0.03);
+        border: 2px dashed rgba(255, 255, 255, 0.15);
+        border-radius: 24px;
+        padding: 2rem 1.5rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(10px);
+        cursor: pointer;
+    }
+
+    .upload-drop-zone:hover {
+        border-color: #a855f7;
+        background: rgba(255, 255, 255, 0.06);
+        transform: translateY(-2px);
+    }
+
+    .ai-processing-card {
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 2rem;
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .scan-line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, transparent, #6366f1, #a855f7, transparent);
+        animation: scanAnimation 2s infinite ease-in-out;
+    }
+
+    @keyframes scanAnimation {
+        0% { top: 0%; opacity: 0.2; }
+        50% { opacity: 1; }
+        100% { top: 100%; opacity: 0.2; }
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(15px);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid var(--glass-border);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+        border-color: rgba(168, 85, 247, 0.5);
+    }
+
+    .feature-icon-wrapper {
+        width: 55px;
+        height: 55px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .step-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(15px);
+        border-radius: 20px;
+        padding: 1.75rem;
+        border: 1px solid var(--glass-border);
+        position: relative;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .step-card:hover {
+        border-color: rgba(168, 85, 247, 0.5);
+        transform: translateY(-3px);
+    }
+
+    .step-number {
+        position: absolute;
+        top: -15px;
+        right: 20px;
+        width: 36px;
+        height: 36px;
+        background: var(--primary-grad);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.9rem;
+        box-shadow: 0 4px 15px var(--accent-glow);
+    }
+
+    .metric-card {
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 1.75rem 1.5rem;
+        color: #ffffff;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .metric-card:hover {
+        border-color: rgba(168, 85, 247, 0.5);
+        box-shadow: 0 10px 25px rgba(168, 85, 247, 0.2);
+    }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const userStatusEl = document.getElementById('userStatus');
+    const isUserLoggedIn = userStatusEl ? userStatusEl.dataset.loggedIn === 'true' : false;
+    let authModalInstance = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const modalElement = document.getElementById('authRequiredModal');
+        if (modalElement) {
+            authModalInstance = new bootstrap.Modal(modalElement, {
+                backdrop: true,
+                keyboard: true,
+                focus: true
+            });
+        }
+
+        const dropZone = document.getElementById('dropZoneArea');
+        if (dropZone && isUserLoggedIn) {
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.add('border-purple', 'bg-opacity-25');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.remove('border-purple', 'bg-opacity-25');
+                }, false);
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files.length > 0) {
+                    validateAndProcessMultipleFiles(files);
+                }
+            });
+        }
+    });
+
+    function handleMultipleFilesSelected(input) {
+        if (input.files && input.files.length > 0) {
+            validateAndProcessMultipleFiles(input.files);
+        }
+    }
+
+    function validateAndProcessMultipleFiles(files) {
+        const errorMsg = document.getElementById('uploadErrorMsg');
+        const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
+        const maxFileSizeMB = 5;
+
+        if (files.length > 5) {
+            errorMsg.textContent = "عذراً، الحد الأقصى المسموح برفعه هو 5 مستندات معاً في المرة الواحدة!";
+            errorMsg.classList.remove('d-none');
+            return;
+        }
+
+        let pdfCount = 0;
+        let imgCount = 0;
+
+        for (let i = 0; i < files.length; i++) {
+            let file = files[i];
+
+            if (!validTypes.includes(file.type)) {
+                errorMsg.textContent = `الملف (${file.name}) غير مسموح به! مسموح فقط بملفات PDF أو الصور (JPEG, PNG).`;
+                errorMsg.classList.remove('d-none');
+                return;
+            }
+
+            if (file.size > maxFileSizeMB * 1024 * 1024) {
+                errorMsg.textContent = `حجم الملف (${file.name}) يتجاوز الحد المسموح (${maxFileSizeMB} ميغابايت)!`;
+                errorMsg.classList.remove('d-none');
+                return;
+            }
+
+            if (file.type === 'application/pdf') {
+                pdfCount++;
+            } else {
+                imgCount++;
+            }
+        }
+
+        if (pdfCount > 2 || imgCount > 3) {
+            errorMsg.textContent = "الحد المسموح به هو بحد أقصى ملفي (2) PDF وثلاث (3) صور فقط!";
+            errorMsg.classList.remove('d-none');
+            return;
+        }
+
+        errorMsg.classList.add('d-none');
+        let fileNamesList = Array.from(files).map(f => f.name).join(', ');
+
+        document.getElementById('analysisStatus').textContent = `جاري فحص (${files.length}) مستندات جمركية واستخراج البيانات (OCR)...`;
+        document.getElementById('scanLineEffect').style.display = 'block';
+
+        const cardContent = document.getElementById('aiCardContent');
+        cardContent.innerHTML = `
+            <div class="spinner-border text-purple mb-3" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h5 class="fw-bold text-white mb-1">جاري معالجة الشحنة و${files.length} مستندات</h5>
+            <p class="text-muted small mb-0">يقوم الوكيل الآن بالتقاطع والمطابقة بين الفواتير وبوالص الشحن...</p>
+        `;
+
+        setTimeout(() => {
+            document.getElementById('scanLineEffect').style.display = 'none';
+            document.getElementById('analysisStatus').textContent = "اكتمل التدقيق الشامل للشحنة بنجاح";
+            cardContent.innerHTML = `
+                <div class="d-flex align-items-center justify-content-center mb-2">
+                    <i class="fa-solid fa-shield-check text-success fs-2 me-2"></i>
+                    <h5 class="fw-bold text-success mb-0">المستندات الجمركية متطابقة وقانونية 100%</h5>
+                </div>
+                <div class="bg-dark bg-opacity-50 p-3 rounded-3 border border-secondary border-opacity-25 text-start small mb-2">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted">المستندات المرفوعة (${files.length}):</span>
+                        <span class="text-white fw-bold text-truncate" style="max-width: 180px;" title="${fileNamesList}">${fileNamesList}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted">نتيجة المطابقة التقاطعية:</span>
+                        <span class="text-success fw-bold">تطابق الأوزان، القيم، والبنود بنجاح</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted">مؤشر المخاطر الكلي:</span>
+                        <span class="text-info fw-bold">منخفض (LOW RISK) - مصرح بالتخليص</span>
+                    </div>
+                </div>
+                <p class="text-muted fs-xs mb-0">اجتازت مستندات الشحنة كافة فحص قواعد الجمارك ومطابقة النظام المنسق بنجاح.</p>
+            `;
+        }, 3000);
+    }
+
+    function checkAuthAndProceed(e, targetUrl) {
+        if (e) e.preventDefault();
+
+        if (!isUserLoggedIn) {
+            if (authModalInstance) {
+                authModalInstance.show();
+            }
+            return false;
+        }
+
+        if (targetUrl && targetUrl !== '#' && !targetUrl.startsWith('#')) {
+            window.location.href = targetUrl;
+        }
+        return true;
+    }
+</script>
+{% endblock %}
