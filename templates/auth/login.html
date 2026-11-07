@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول | Spellbook AI</title>
+    <!-- Google Fonts: Cairo & Tajawal -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-grad: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+            --accent-glow: rgba(139, 92, 246, 0.35);
+            --bg-gradient: radial-gradient(circle at 20% 20%, #1e1b4b 0%, #0f172a 50%, #030712 100%);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --glass-hover: rgba(255, 255, 255, 0.07);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --input-bg: rgba(15, 23, 42, 0.6);
+            --input-border: rgba(255, 255, 255, 0.1);
+            --input-focus: #a855f7;
+            --error-color: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-gradient);
+            overflow-x: hidden;
+            position: relative;
+            color: var(--text-main);
+        }
+
+        /* Animated Glowing Orbs Background */
+        .ambient-light {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.5;
+            animation: float 18s infinite alternate ease-in-out;
+        }
+
+        .orb-1 {
+            width: 450px;
+            height: 450px;
+            background: #4f46e5;
+            top: -10%;
+            right: -5%;
+            animation-duration: 14s;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: #c026d3;
+            bottom: -10%;
+            left: -5%;
+            animation-duration: 20s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: #06b6d4;
+            top: 40%;
+            left: 30%;
+            animation-duration: 16s;
+            opacity: 0.3;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(40px, 50px) scale(1.1); }
+            100% { transform: translate(-30px, 20px) scale(0.95); }
+        }
+
+        /* Main Glassmorphism Card Container */
+        .login-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1050px;
+            margin: 20px;
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(139, 92, 246, 0.15);
+            overflow: hidden;
+        }
+
+        /* Hero / Branding Side */
+        .brand-section {
+            padding: 60px 45px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(217, 70, 239, 0.05) 100%);
+            border-left: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .brand-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 70%);
+            pointer-events: none;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-grad);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+            box-shadow: 0 8px 20px var(--accent-glow);
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to left, #fff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-content {
+            margin: 40px 0;
+        }
+
+        .hero-title {
+            font-size: 36px;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 18px;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-title span {
+            background: var(--primary-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-description {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-weight: 400;
+        }
+
+        /* Feature Badges */
+        .features-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 25px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: #e2e8f0;
+        }
+
+        .feature-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: rgba(139, 92, 246, 0.2);
+            color: #c084fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .brand-footer {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Form Side */
+        .form-section {
+            padding: 60px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.2);
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+        }
+
+        .form-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .form-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Input Group Layout */
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px 45px 14px 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 14px;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+        }
+
+        .input-field.has-toggle {
+            padding-left: 45px;
+        }
+
+        .input-field::placeholder {
+            color: #64748b;
+        }
+
+        .input-field:focus {
+            border-color: var(--input-focus);
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.15), 0 0 20px rgba(168, 85, 247, 0.2);
+        }
+
+        .field-icon {
+            position: absolute;
+            right: 16px;
+            color: #64748b;
+            font-size: 16px;
+            transition: color 0.3s ease;
+            pointer-events: none;
+        }
+
+        .input-field:focus ~ .field-icon {
+            color: var(--input-focus);
+        }
+
+        .toggle-password {
+            position: absolute;
+            left: 16px;
+            cursor: pointer;
+            pointer-events: all;
+            color: #64748b;
+            transition: color 0.3s;
+            padding: 4px;
+        }
+
+        .toggle-password:hover {
+            color: #fff;
+        }
+
+        /* Validation Messages */
+        .text-danger {
+            color: var(--error-color);
+            font-size: 12px;
+            margin-top: 6px;
+            display: block;
+        }
+
+        /* Options Row */
+        .form-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            font-size: 13px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: var(--text-muted);
+            user-select: none;
+        }
+
+        .remember-me input[type="checkbox"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            background: var(--input-bg);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .remember-me input[type="checkbox"]:checked {
+            background: #8b5cf6;
+            border-color: #8b5cf6;
+        }
+
+        .remember-me input[type="checkbox"]:checked::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: #fff;
+            font-size: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .forgot-link {
+            color: #a855f7;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .forgot-link:hover {
+            color: #c084fc;
+            text-decoration: underline;
+        }
+
+        /* Glowing Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary-grad);
+            border: none;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 25px -5px var(--accent-glow);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(139, 92, 246, 0.5);
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Footer Help */
+        .form-footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .form-footer a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            margin-right: 5px;
+        }
+
+        .form-footer a:hover {
+            color: #a855f7;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 900px) {
+            .login-wrapper {
+                grid-template-columns: 1fr;
+                max-width: 480px;
+                border-radius: 20px;
+            }
+            .brand-section {
+                padding: 40px 30px;
+                border-left: none;
+                border-bottom: 1px solid var(--glass-border);
+            }
+            .form-section {
+                padding: 40px 30px;
+            }
+            .hero-title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dynamic Glowing Backdrop Background -->
+    <div class="ambient-light">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Main Glassmorphism Interface -->
+    <div class="login-wrapper">
+
+        <!-- Right Side: Brand Experience & Identity -->
+        <div class="brand-section">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <div class="logo-text">Spellbook AI</div>
+            </div>
+
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    منصة التدقيق <span>الذكية</span> للوثائق الجمركية
+                </h1>
+                <p class="hero-description">
+                    أهلاً بك في الجيل الجديد من المعالجة الرقمية. أتمتة فائقة السرعة، تحليل دقيق للمستندات، ورؤى مدعومة بالذكاء الاصطناعي في مكان واحد.
+                </p>
+
+                <div class="features-list">
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fa-solid fa-bolt"></i></div>
+                        <span>تحليل فوري وبيانات دقيقة بدون خطأ بشري</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                        <span>حماية وتشفير عالي المستوى للبيانات الجمركية</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                        <span>تقارير شاملة ولوحة تحكم تفاعلية ذكية</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="brand-footer">
+                <i class="fa-solid fa-circle-check" style="color: #10b981;"></i>
+                <span>النظام يعمل بكفاءة 100% ومدعوم تقنياً</span>
+            </div>
+        </div>
+
+        <!-- Left Side: Interactive Login Form -->
+        <div class="form-section">
+            <div class="form-header">
+                <h2 class="form-title">تسجيل الدخول</h2>
+                <p class="form-subtitle">أدخل بيانات حسابك للمتابعة إلى لوحة التحكم</p>
+            </div>
+
+            <!-- FastAPI HTML Form -->
+            <form action="/login" method="POST">
+
+                <!-- Username Field -->
+                <div class="input-group">
+                    <label class="input-label" for="username">اسم المستخدم</label>
+                    <div class="input-wrapper">
+                        <input class="input-field" type="text" id="username" name="username" placeholder="اسم المستخدم" autocomplete="username" required>
+                        <i class="fa-regular fa-envelope field-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="input-group">
+                    <label class="input-label" for="password">كلمة المرور</label>
+                    <div class="input-wrapper">
+                        <input class="input-field has-toggle" type="password" id="password" name="password" placeholder="••••••••••••" autocomplete="current-password" required>
+                        <i class="fa-regular fa-lock field-icon"></i>
+                        <i class="fa-regular fa-eye toggle-password" id="toggleIcon" role="button" tabindex="0" aria-label="عرض أو إخفاء كلمة المرور" onclick="togglePasswordVisibility()" onkeydown="handleToggleKeydown(event)"></i>
+                    </div>
+                </div>
+
+                <!-- Form Options -->
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="remember" name="remember">
+                        <span>تذكر بياناتي</span>
+                    </label>
+                    <a href="/forgot-password" class="forgot-link">نسيت كلمة المرور؟</a>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn">
+                    <span>دخول إلى النظام</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </form>
+
+            <div class="form-footer">
+                <span>ليس لديك حساب؟</span>
+                <a href="/register">سجل حساب جديد</a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script Section -->
+    <script>
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        function handleToggleKeydown(event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                togglePasswordVisibility();
+            }
+        }
+    </script>
+</body>
+</html>

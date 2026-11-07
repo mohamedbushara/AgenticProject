@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب جديد | Spellbook AI</title>
+
+    <!-- Google Fonts: Cairo & Tajawal -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-grad: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+            --accent-glow: rgba(139, 92, 246, 0.35);
+            --bg-gradient: radial-gradient(circle at 20% 20%, #1e1b4b 0%, #0f172a 50%, #030712 100%);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --input-bg: rgba(15, 23, 42, 0.6);
+            --input-border: rgba(255, 255, 255, 0.1);
+            --input-focus: #a855f7;
+            --error-color: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-gradient);
+            overflow-x: hidden;
+            position: relative;
+            color: var(--text-main);
+            padding: 20px 0;
+        }
+
+        /* Ambient Glowing Orbs Background */
+        .ambient-light {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.5;
+            animation: float 18s infinite alternate ease-in-out;
+        }
+
+        .orb-1 {
+            width: 450px;
+            height: 450px;
+            background: #4f46e5;
+            top: -10%;
+            right: -5%;
+            animation-duration: 14s;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: #c026d3;
+            bottom: -10%;
+            left: -5%;
+            animation-duration: 20s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: #06b6d4;
+            top: 40%;
+            left: 30%;
+            animation-duration: 16s;
+            opacity: 0.3;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(40px, 50px) scale(1.1); }
+            100% { transform: translate(-30px, 20px) scale(0.95); }
+        }
+
+        /* Glassmorphism Card Wrapper */
+        .register-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1100px;
+            margin: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1.15fr;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(139, 92, 246, 0.15);
+            overflow: hidden;
+        }
+
+        /* Brand / Identity Side */
+        .brand-section {
+            padding: 50px 40px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(217, 70, 239, 0.05) 100%);
+            border-left: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-grad);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+            box-shadow: 0 8px 20px var(--accent-glow);
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to left, #fff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-content {
+            margin: 30px 0;
+        }
+
+        .hero-title {
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-title span {
+            background: var(--primary-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-description {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        .steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-top: 25px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .step-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: rgba(139, 92, 246, 0.2);
+            color: #c084fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            flex-shrink: 0;
+        }
+
+        .step-text h4 {
+            font-size: 14px;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .step-text p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .brand-footer {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Form Side */
+        .form-section {
+            padding: 50px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.2);
+        }
+
+        .form-header {
+            margin-bottom: 20px;
+        }
+
+        .form-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .form-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 13px 16px 13px 42px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 14px;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+        }
+
+        .input-field.has-toggle {
+            padding-left: 42px;
+        }
+
+        .input-field::placeholder {
+            color: #64748b;
+        }
+
+        .input-field:focus {
+            border-color: var(--input-focus);
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.15), 0 0 20px rgba(168, 85, 247, 0.2);
+        }
+
+        .field-icon {
+            position: absolute;
+            right: 14px;
+            color: #64748b;
+            font-size: 15px;
+            transition: color 0.3s ease;
+            pointer-events: none;
+        }
+
+        .input-field:focus ~ .field-icon {
+            color: var(--input-focus);
+        }
+
+        .toggle-password {
+            position: absolute;
+            left: 14px;
+            cursor: pointer;
+            pointer-events: all;
+            color: #64748b;
+            transition: color 0.3s;
+            padding: 4px;
+        }
+
+        .toggle-password:hover {
+            color: #fff;
+        }
+
+        /* Terms Checkbox */
+        .terms-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: var(--text-muted);
+            user-select: none;
+        }
+
+        .terms-box input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            background: var(--input-bg);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .terms-box input[type="checkbox"]:checked {
+            background: #8b5cf6;
+            border-color: #8b5cf6;
+        }
+
+        .terms-box input[type="checkbox"]:checked::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: #fff;
+            font-size: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .terms-box a {
+            color: #a855f7;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .terms-box a:hover {
+            text-decoration: underline;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary-grad);
+            border: none;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 25px -5px var(--accent-glow);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(139, 92, 246, 0.5);
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .form-footer {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 13.5px;
+            color: var(--text-muted);
+        }
+
+        .form-footer a {
+            color: #c084fc;
+            text-decoration: none;
+            font-weight: 700;
+            margin-right: 5px;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 950px) {
+            .register-wrapper {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+            .brand-section {
+                padding: 35px 30px;
+                border-left: none;
+                border-bottom: 1px solid var(--glass-border);
+            }
+            .form-section {
+                padding: 35px 30px;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dynamic Ambient Background -->
+    <div class="ambient-light">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Main Glassmorphism Interface -->
+    <div class="register-wrapper">
+
+        <!-- Right Side: Brand Experience & Identity -->
+        <div class="brand-section">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <div class="logo-text">Spellbook AI</div>
+            </div>
+
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    انضم إلى منصة <span>Spellbook AI</span> الذكية
+                </h1>
+                <p class="hero-description">
+                    قم بإنشاء حسابك اليوم لتستفيد من أدوات الذكاء الاصطناعي في تدقيق ومعالجة المستندات الجمركية بأعلى قدر من الدقة والأمان.
+                </p>
+
+                <div class="steps-list">
+                    <div class="step-item">
+                        <div class="step-badge">1</div>
+                        <div class="step-text">
+                            <h4>إنشاء الحساب</h4>
+                            <p>أدخل بياناتك الشخصية والمهنية المطلوبة</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-badge">2</div>
+                        <div class="step-text">
+                            <h4>تأكيد الحساب</h4>
+                            <p>يتم التحقق من الحساب لضمان أعلى مستويات الأمان</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-badge">3</div>
+                        <div class="step-text">
+                            <h4>بدء العمل</h4>
+                            <p>الوصول المباشر للوحة التحكم والذكاء الاصطناعي</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="brand-footer">
+                <i class="fa-solid fa-shield-halved" style="color: #a855f7;"></i>
+                <span>تشفير متقدم لحماية بيانات المستخدمين</span>
+            </div>
+        </div>
+
+        <!-- Left Side: Interactive Registration Form -->
+        <div class="form-section">
+            <div class="form-header">
+                <h2 class="form-title">حساب جديد</h2>
+                <p class="form-subtitle">أدخل بياناتك لتسجيل حساب مستخدم جديد</p>
+            </div>
+
+            <!-- عرض تنبيه الخطأ هنا داخل نفس الصفحة إن وجد -->
+            {% if error_message %}
+                <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #f87171; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; font-size: 14px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span>{{ error_message }}</span>
+                </div>
+            {% endif %}
+
+            <!-- HTML Form for FastAPI -->
+            <form action="/register" method="POST">
+
+                <!-- Full Name Field -->
+                <div class="input-group">
+                    <label class="input-label" for="username">الاسم بالكامل</label>
+                    <div class="input-wrapper">
+                        <input class="input-field" type="text" id="username" name="username" placeholder="محمد بشارة آدم" autocomplete="name" required>
+                        <i class="fa-regular fa-user field-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Row for Email & Phone -->
+                <div class="form-row">
+                    <div class="input-group">
+                        <label class="input-label" for="email">البريد الإلكتروني</label>
+                        <div class="input-wrapper">
+                            <input class="input-field" type="email" id="email" name="email" placeholder="name@domain.com" autocomplete="email" required>
+                            <i class="fa-regular fa-envelope field-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="phone">رقم الهاتف</label>
+                        <div class="input-wrapper">
+                            <input class="input-field" type="tel" id="phone" name="phone" placeholder="0912345678" autocomplete="tel">
+                            <i class="fa-regular fa-phone field-icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="input-group">
+                    <label class="input-label" for="password">كلمة المرور</label>
+                    <div class="input-wrapper">
+                        <input class="input-field has-toggle" type="password" id="password" name="password" placeholder="••••••••••••" autocomplete="new-password" required>
+                        <i class="fa-regular fa-lock field-icon"></i>
+                        <i class="fa-regular fa-eye toggle-password" id="togglePass" role="button" tabindex="0" onclick="togglePassword('password', 'togglePass')"></i>
+                    </div>
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div class="input-group">
+                    <label class="input-label" for="confirmPassword">تأكيد كلمة المرور</label>
+                    <div class="input-wrapper">
+                        <input class="input-field has-toggle" type="password" id="confirmPassword" name="confirm_password" placeholder="••••••••••••" autocomplete="new-password" required>
+                        <i class="fa-regular fa-lock field-icon"></i>
+                        <i class="fa-regular fa-eye toggle-password" id="toggleConfirmPass" role="button" tabindex="0" onclick="togglePassword('confirmPassword', 'toggleConfirmPass')"></i>
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="terms-box">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">أوافق على <a href="#">الشروط والأحكام</a> و <a href="#">سياسة الخصوصية</a></label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn">
+                    <span>إنشاء الحساب</span>
+                    <i class="fa-solid fa-user-plus"></i>
+                </button>
+            </form>
+
+            <div class="form-footer">
+                <span>لديك حساب بالفعل؟</span>
+                <a href="/login">تسجيل الدخول</a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Toggle Password Script -->
+    <script>
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
+
+</body>
+</html>

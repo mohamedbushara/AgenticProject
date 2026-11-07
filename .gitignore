@@ -1,0 +1,15 @@
+# Python bytecode & cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual Environments
+venv/
+env/
+.venv/
+
+# VS Code settings
+.vscode/
+
+# Local database config (اختياري لو مش عايز ترفع بيانات الاتصال على جيت هاب)
+config.py
