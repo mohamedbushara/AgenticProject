@@ -10,9 +10,9 @@
         <span class="badge bg-primary bg-opacity-15 text-purple border border-secondary border-opacity-25 rounded-pill px-3 py-2 fw-bold mb-2">
             <i class="fa-solid fa-clock-rotate-left me-1"></i> أرشيف وسجل الفحص الفوري
         </span>
-        <h2 class="fw-black text-white">سجل فحوصات المستندات الإلكترونية</h2>
+        <h2 class="fw-black text-white">سجل فحوصات المستندات الإلكترونية الحقيقي</h2>
         <p class="text-muted small mx-auto mb-0" style="max-width: 650px;">
-            متابعة كافة العمليات والتقارير الجمركية الصادرة سابقاً بواسطة محرك الذكاء الاصطناعي مع إمكانية مراجعة الفحوصات وتحليل المخاطر الجمركية.
+            متابعة كافة العمليات والتقارير الجمركية الصادرة من قاعدة البيانات SQL Server مباشرة مع تحليلات الذكاء الاصطناعي.
         </p>
     </div>
 
@@ -22,7 +22,7 @@
             <div class="card custom-card kpi-card p-3 d-flex flex-row align-items-center justify-content-between" style="background: rgba(15, 23, 42, 0.75); border: 1px solid var(--glass-border); border-right: 4px solid #0d6efd;">
                 <div>
                     <span class="text-muted small d-block">إجمالي الفحوصات</span>
-                    <h3 class="fw-black text-white mb-0" id="statTotalCount">124</h3>
+                    <h3 class="fw-black text-white mb-0" id="statTotalCount">0</h3>
                 </div>
                 <div class="rounded-circle bg-primary bg-opacity-15 text-primary p-3">
                     <i class="fa-solid fa-file-contract fs-4"></i>
@@ -34,7 +34,7 @@
             <div class="card custom-card kpi-card p-3 d-flex flex-row align-items-center justify-content-between" style="background: rgba(15, 23, 42, 0.75); border: 1px solid var(--glass-border); border-right: 4px solid #198754;">
                 <div>
                     <span class="text-muted small d-block">مقبولة ومطابقة</span>
-                    <h3 class="fw-black text-success mb-0" id="statPassedCount">98</h3>
+                    <h3 class="fw-black text-success mb-0" id="statPassedCount">0</h3>
                 </div>
                 <div class="rounded-circle bg-success bg-opacity-15 text-success p-3">
                     <i class="fa-solid fa-circle-check fs-4"></i>
@@ -46,7 +46,7 @@
             <div class="card custom-card kpi-card p-3 d-flex flex-row align-items-center justify-content-between" style="background: rgba(15, 23, 42, 0.75); border: 1px solid var(--glass-border); border-right: 4px solid #dc3545;">
                 <div>
                     <span class="text-muted small d-block">مخاطر عالية/مخالفات</span>
-                    <h3 class="fw-black text-danger mb-0" id="statHighRiskCount">14</h3>
+                    <h3 class="fw-black text-danger mb-0" id="statHighRiskCount">0</h3>
                 </div>
                 <div class="rounded-circle bg-danger bg-opacity-15 text-danger p-3">
                     <i class="fa-solid fa-triangle-exclamation fs-4"></i>
@@ -58,7 +58,7 @@
             <div class="card custom-card kpi-card p-3 d-flex flex-row align-items-center justify-content-between" style="background: rgba(15, 23, 42, 0.75); border: 1px solid var(--glass-border); border-right: 4px solid #ffc107;">
                 <div>
                     <span class="text-muted small d-block">قيد التعديل والتدقيق</span>
-                    <h3 class="fw-black text-warning mb-0" id="statPendingCount">12</h3>
+                    <h3 class="fw-black text-warning mb-0" id="statPendingCount">0</h3>
                 </div>
                 <div class="rounded-circle bg-warning bg-opacity-15 text-warning p-3">
                     <i class="fa-solid fa-hourglass-half fs-4"></i>
@@ -84,7 +84,7 @@
                     <option value="ALL">جميع الحالات</option>
                     <option value="PASSED">مطابق ومقبول</option>
                     <option value="HIGH_RISK">مخاطر عالية</option>
-                    <option value="PENDING">قيد المراجعة</option>
+                    <option value="REVIEW_REQUIRED">قيد المراجعة</option>
                 </select>
             </div>
 
@@ -113,7 +113,9 @@
                         <th scope="col" class="text-center small fw-bold text-muted">الإجراءات</th>
                     </tr>
                 </thead>
-                <tbody id="inspectionTableBody"></tbody>
+                <tbody id="inspectionTableBody">
+                    <tr><td colspan="7" class="text-center text-muted py-4">جاري تحميل السجلات الحقيقية من قاعدة البيانات...</td></tr>
+                </tbody>
             </table>
         </div>
 
@@ -136,117 +138,60 @@
 <style>
     .fw-black { font-weight: 900; }
     .fs-xs { font-size: 0.75rem; }
-
-    .custom-card {
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .kpi-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(168, 85, 247, 0.2);
-    }
-
-    .table-custom thead th {
-        background-color: rgba(255, 255, 255, 0.03);
-        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-        padding: 12px 16px;
-        white-space: nowrap;
-    }
-
-    .table-custom tbody td {
-        padding: 14px 16px;
-        vertical-align: middle;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        color: #f8fafc;
-    }
-
-    .table-custom tbody tr:hover {
-        background-color: rgba(255, 255, 255, 0.03);
-    }
-
+    .custom-card { border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); transition: transform 0.3s ease; }
+    .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(168, 85, 247, 0.2); }
+    .table-custom thead th { background-color: rgba(255, 255, 255, 0.03); border-bottom: 2px solid rgba(255, 255, 255, 0.1); padding: 12px 16px; white-space: nowrap; }
+    .table-custom tbody td { padding: 14px 16px; vertical-align: middle; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #f8fafc; }
     .risk-badge-low { background-color: rgba(46, 125, 50, 0.2); color: #4ade80; }
     .risk-badge-medium { background-color: rgba(245, 127, 23, 0.2); color: #fbbf24; }
     .risk-badge-high { background-color: rgba(198, 40, 40, 0.2); color: #f87171; }
-
-    .offcanvas-custom {
-        border-top-left-radius: 20px;
-        border-bottom-left-radius: 20px;
-    }
+    .offcanvas-custom { border-top-left-radius: 20px; border-bottom-left-radius: 20px; }
 </style>
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
-    const inspectionHistoryData = [
-        {
-            id: "INSP-2026-8801",
-            date: "2026-08-30",
-            importer: "شركة البركة للاستيراد والتصدير",
-            item: "محولات كهربائية 500KVA",
-            hsCode: "8504.40.00",
-            riskScore: 12,
-            riskLevel: "LOW",
-            status: "PASSED",
-            statusText: "مطابق ومقبول",
-            aiSummary: "جميع مستندات الفاتورة وبوليسة الشحن وشهادة المنشأ متطابقة بنسبة 98%. لا توجد فروقات في التقييم الجمركي.",
-            documents: ["Invoice_8801.pdf", "Bill_Of_Lading.pdf", "Origin_Cert.pdf"]
-        },
-        {
-            id: "INSP-2026-8794",
-            date: "2026-08-29",
-            importer: "مؤسسة النيل للحلول التكنولوجية",
-            item: "أجهزة حاسوب وطابعات",
-            hsCode: "8471.30.00",
-            riskScore: 85,
-            riskLevel: "HIGH",
-            status: "HIGH_RISK",
-            statusText: "مخاطر عالية",
-            aiSummary: "اشتباه بإنقاص القيمة الفعلية للفاتورة بنسبة 35% مقارنة بالأسعار المرجعية. يتطلب خط سير أحمر وفحص يدوي.",
-            documents: ["Tech_Invoice.pdf", "NTC_Permit.pdf"]
-        },
-        {
-            id: "INSP-2026-8750",
-            date: "2026-08-28",
-            importer: "شركة المدار الهندسية",
-            item: "ألواح طاقة شمسية 550W",
-            hsCode: "8541.40.10",
-            riskScore: 45,
-            riskLevel: "MEDIUM",
-            status: "PENDING",
-            statusText: "قيد المراجعة",
-            aiSummary: "المستندات مطابقة ولكن شهادة المواصفات والمقاييس بحاجة لإعادة تصديق من الجهة المختصة.",
-            documents: ["Solar_Invoice_2026.pdf"]
-        },
-        {
-            id: "INSP-2026-8690",
-            date: "2026-08-25",
-            importer: "محمود عبد الله لتجارة السيارات",
-            item: "سيارات صالون تويوتا 2025",
-            hsCode: "8703.23.10",
-            riskScore: 18,
-            riskLevel: "LOW",
-            status: "PASSED",
-            statusText: "مطابق ومقبول",
-            aiSummary: "تم التثبت من شرط الموديل وسعة المحرك والتقييم الجمركي المعتمد بدون أي ملاحظات.",
-            documents: ["Car_Customs_Declaration.pdf"]
-        }
-    ];
-
+    let globalInspectionData = [];
     let myOffcanvas = null;
 
     document.addEventListener("DOMContentLoaded", function () {
         myOffcanvas = new bootstrap.Offcanvas(document.getElementById('reportOffcanvas'));
-        renderInspectionTable(inspectionHistoryData);
+        fetchInspectionHistory();
     });
+
+    async function fetchInspectionHistory() {
+        try {
+            const response = await fetch('/api/inspections-history');
+            const result = await response.json();
+            if (result.status === "success") {
+                globalInspectionData = result.data;
+                renderInspectionTable(globalInspectionData);
+                updateKPIs(globalInspectionData);
+            }
+        } catch (error) {
+            console.error("Error fetching inspection history:", error);
+            document.getElementById('inspectionTableBody').innerHTML = `<tr><td colspan="7" class="text-center text-danger py-4">فشل جلب السجلات من الخادم</td></tr>`;
+        }
+    }
+
+    function updateKPIs(data) {
+        const total = data.length;
+        const passed = data.filter(x => x.status === "PASSED").length;
+        const highRisk = data.filter(x => x.status === "HIGH_RISK" || x.riskLevel === "HIGH").length;
+        const pending = data.filter(x => x.status === "REVIEW_REQUIRED" || x.status === "PENDING").length;
+
+        document.getElementById('statTotalCount').innerText = total;
+        document.getElementById('statPassedCount').innerText = passed;
+        document.getElementById('statHighRiskCount').innerText = highRisk;
+        document.getElementById('statPendingCount').innerText = pending;
+    }
 
     function renderInspectionTable(data) {
         const tbody = document.getElementById('inspectionTableBody');
         tbody.innerHTML = '';
 
         if (data.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-4">لا توجد فحوصات مطابقة لخيارات البحث</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-4">لا توجد سجلات فحص مسجلة حتى الآن</td></tr>`;
             return;
         }
 
@@ -293,13 +238,13 @@
         const status = document.getElementById('statusFilter').value;
         const date = document.getElementById('dateFilter').value;
 
-        const filtered = inspectionHistoryData.filter(item => {
+        const filtered = globalInspectionData.filter(item => {
             const matchesQuery = item.id.toLowerCase().includes(query) ||
                 item.importer.toLowerCase().includes(query) ||
                 item.item.toLowerCase().includes(query);
 
             const matchesStatus = (status === "ALL") || (item.status === status);
-            const matchesDate = !date || (item.date === date);
+            const matchesDate = !date || item.date.startsWith(date);
 
             return matchesQuery && matchesStatus && matchesDate;
         });
@@ -311,11 +256,11 @@
         document.getElementById('searchInput').value = '';
         document.getElementById('statusFilter').value = 'ALL';
         document.getElementById('dateFilter').value = '';
-        renderInspectionTable(inspectionHistoryData);
+        renderInspectionTable(globalInspectionData);
     }
 
     function viewInspectionReport(id) {
-        const item = inspectionHistoryData.find(x => x.id === id);
+        const item = globalInspectionData.find(x => x.id === id);
         if (!item) return;
 
         const container = document.getElementById('offcanvasReportContent');
@@ -346,7 +291,7 @@
             </ul>
 
             <div class="d-grid gap-2">
-                <button class="btn-inspect-cta justify-content-center py-2" onclick="alert('جاري تحميل التقرير الشامل صيغة PDF...')"><i class="fa-solid fa-download me-1"></i> تحميل التقرير الكامل (PDF)</button>
+                <button class="btn btn-primary py-2 fw-bold" onclick="alert('جاري تحميل التقرير الشامل بصيغة PDF...')"><i class="fa-solid fa-download me-1"></i> تحميل التقرير الكامل (PDF)</button>
             </div>
         `;
 
